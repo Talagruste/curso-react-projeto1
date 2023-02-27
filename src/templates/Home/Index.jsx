@@ -1,3 +1,4 @@
+import React from 'react';
 import { Component } from 'react';
 
 import './Styles.css';
@@ -13,7 +14,7 @@ export class Home extends Component {
     allPosts: [],
     page: 0,
     postsPerPage: 3,
-    searchValue: ''
+    searchValue: '',
   };
 
   async componentDidMount() {
@@ -28,69 +29,48 @@ export class Home extends Component {
       posts: postsAndPhotos.slice(page, postsPerPage),
       allPosts: postsAndPhotos,
     });
-  }
+  };
 
   loadMorePosts = () => {
-    const {
-      page,
-      postsPerPage,
-      allPosts,
-      posts
-    } = this.state;
+    const { page, postsPerPage, allPosts, posts } = this.state;
     const nextPage = page + postsPerPage;
     const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
     posts.push(...nextPosts);
 
     this.setState({ posts, page: nextPage });
-  }
+  };
 
   handleChange = (e) => {
     const { value } = e.target;
     this.setState({ searchValue: value });
-  }
+  };
 
   render() {
     const { posts, page, postsPerPage, allPosts, searchValue } = this.state;
-    const noMorePosts = (page + postsPerPage) >= allPosts.length;
+    const noMorePosts = page + postsPerPage >= allPosts.length;
 
-    const filteredPosts = !!searchValue ?
-      allPosts.filter(post => {
-        return post.title.toLowerCase().includes(
-          searchValue.toLowerCase()
-        );
-      })
+    const filteredPosts = searchValue
+      ? allPosts.filter((post) => {
+          return post.title.toLowerCase().includes(searchValue.toLowerCase());
+        })
       : posts;
 
     return (
       <section className="container">
-        <div className='search-container'>
-          {!!searchValue && (
-            <h3>Search value: {searchValue}</h3>
-          )}
+        <div className="search-container">
+          {!!searchValue && <h3>Search value: {searchValue}</h3>}
 
           <TextInput searchValue={searchValue} handleChange={this.handleChange} />
         </div>
 
-        {filteredPosts.length > 0 && (
-          <Posts posts={filteredPosts} />
-        )}
+        {filteredPosts.length > 0 && <Posts posts={filteredPosts} />}
 
-        {filteredPosts.length === 0 && (
-          <p>Não existem posts com essa busca.</p>
-        )}
+        {filteredPosts.length === 0 && <p>Não existem posts com essa busca.</p>}
 
         <div className="button-container">
-          {!searchValue && (
-            <Button
-              text="Load more posts"
-              onClick={this.loadMorePosts}
-              disabled={noMorePosts}
-            />
-          )}
+          {!searchValue && <Button text="Load more posts" onClick={this.loadMorePosts} disabled={noMorePosts} />}
         </div>
       </section>
     );
   }
 }
-
-
